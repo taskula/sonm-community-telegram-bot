@@ -1,0 +1,11 @@
+{
+  "Bot": {
+    "TOKEN": "ADD_BOT_TOKEN_HERE"
+  },
+  "Log": {
+    "LEVEL": "warn"
+  },
+  "Telegram": {
+    "BASE_URL": "https://api.telegram.org/bot"
+  }
+}

@@ -7,6 +7,9 @@ name = "pypi"
 
 [packages]
 python-telegram-bot = "*"
+seaborn = "*"
+pandas = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.6"

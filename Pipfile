@@ -10,6 +10,7 @@ python-telegram-bot = "*"
 seaborn = "*"
 pandas = "*"
 numpy = "*"
+scipy = "*"
 
 [requires]
 python_version = "3.6"

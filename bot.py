@@ -21,6 +21,13 @@ class Bot(telegram.Bot):
     def hello(self, bot, update):
         bot.send_message(chat_id=update.message.chat_id, text ='Hello World')
 
+    def predict(self, bot, update):
+        import random
+
+        foo = ['moon', 'ded', 'ded', 'ded', 'ded','ded','ded','scam','scam','ded scam']
+        response = random.choice(foo)
+        bot.send_message(chat_id=update.message.chat_id, text =response)
+
     def stats(self, bot, update):
         command = "curl -s https://dwh.livenet.sonm.com:15022/DWHServer/GetDeals/ -d" 
         command = command + " '" 
@@ -47,6 +54,11 @@ class Bot(telegram.Bot):
                 testlist.append(r[headposition[i-1] : headposition[i]])
         #
         self.df = pd.DataFrame(testlist)
+        f.close()
+        del k
+        del r
+        del headposition
+        del testlist
         #
         #Data Cleaning
         self.df['consumer_ID'] = self.df[15].apply(self.Supplier_ID_conversion)
@@ -158,6 +170,11 @@ class Bot(telegram.Bot):
                 testlist.append(r[headposition[i-1] : headposition[i]])
         #
         self.df = pd.DataFrame(testlist)
+        f.close()
+        del k
+        del r
+        del headposition
+        del testlist        
         #
         #Data Cleaning
         self.df['consumer_ID'] = self.df[15].apply(self.Supplier_ID_conversion)
@@ -269,6 +286,11 @@ class Bot(telegram.Bot):
                 testlist.append(r[headposition[i-1] : headposition[i]])
         #
         self.df = pd.DataFrame(testlist)
+        f.close()
+        del k
+        del r
+        del headposition
+        del testlist
         #
         #Data Cleaning
         self.df['consumer_ID'] = self.df[15].apply(self.Supplier_ID_conversion)
@@ -356,6 +378,11 @@ class Bot(telegram.Bot):
                 testlist.append(r[headposition[i-1] : headposition[i]])
         #
         self.df = pd.DataFrame(testlist)
+        f.close()
+        del k
+        del r
+        del headposition
+        del testlist        
         #
         #Data Cleaning
         self.df['consumer_ID'] = self.df[15].apply(self.Supplier_ID_conversion)
@@ -641,8 +668,7 @@ class Bot(telegram.Bot):
         dispatcher.add_handler(CommandHandler("profit", self.profit))
         dispatcher.add_handler(CommandHandler("suppliers", self.suppliers))
         dispatcher.add_handler(CommandHandler("consumers", self.consumers))
-
-
+        dispatcher.add_handler(CommandHandler("predict", self.predict))
        
         updater.start_polling()
         updater.idle()

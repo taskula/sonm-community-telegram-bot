@@ -24,10 +24,27 @@ class Bot(telegram.Bot):
 
     def predict(self, bot, update):
 
+        command = 'curl -s https://api.coinmarketcap.com/v2/ticker/1723/?convert=BTC > price.txt'
+        os.system(command)
+        f = open('price.txt', 'r')
+        content = f.readlines()
+        f.close()
+        print("price " + content[12][24:-3])
+        increase = float(content[16][37:-3])
+        print(increase)
 
-        foo = ['moon', 'ded', 'ded', 'ded', 'ded','ded','scam','ded scam','ded scam village','delisted']
+        if increase > 10:
+            foo = ['moon','moon','moon', 'two weeks','two weeks', 'ded']
+        else:
+            foo = ['moon', 'ded', 'ded', 'ded', 'ded','ded','scam','ded scam','ded scam village','delisted']
         response = random.choice(foo)
         bot.send_message(chat_id=update.message.chat_id, text =response)
+
+
+    def version(self, bot, update):
+
+        message = "Ver 0.1.3"
+        bot.send_message(chat_id=update.message.chat_id, text =message)
 
     def data_update(self):
 
@@ -364,10 +381,6 @@ class Bot(telegram.Bot):
 
 
 
-    def test(self, bot, update):
-
-        message = "test"
-        bot.send_message(chat_id=update.message.chat_id, text =message)
 
 
     def benchmark(self,content):
@@ -415,7 +428,7 @@ class Bot(telegram.Bot):
 
         dispatcher.add_handler(CommandHandler("stats", self.stats))
         dispatcher.add_handler(CommandHandler("hello", self.hello))
-        dispatcher.add_handler(CommandHandler("test", self.test))
+        dispatcher.add_handler(CommandHandler("version", self.version))
         dispatcher.add_handler(CommandHandler("profit", self.profit))
         dispatcher.add_handler(CommandHandler("suppliers", self.suppliers))
         dispatcher.add_handler(CommandHandler("consumers", self.consumers))

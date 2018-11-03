@@ -16,8 +16,8 @@ class Bot(telegram.Bot):
                             level=logging.INFO)
         self.config = config
         super(Bot,self).__init__(self.config['Bot']['TOKEN'], *args, **kwargs)
-         
-        self.df = pd.DataFrame()	
+
+        self.df = pd.DataFrame()
 
     def hello(self, bot, update):
         bot.send_message(chat_id=update.message.chat_id, text ='Hello World')
@@ -34,16 +34,22 @@ class Bot(telegram.Bot):
         print(increase)
 
         if increase > 10:
-            foo = ['moon','moon','moon', 'two weeks','two weeks', 'ded']
+            foo = ['moon','moon','moon','moon','moon', 'two weeks','two weeks', 'ded']
+        elif increase > 5:
+            foo = ['moon', 'two weeks', 'ded']
         else:
             foo = ['moon', 'ded', 'ded', 'ded', 'ded','ded','scam','ded scam','ded scam village','delisted']
         response = random.choice(foo)
         bot.send_message(chat_id=update.message.chat_id, text =response)
 
+        del content
+        del increase
+        del response
+
 
     def version(self, bot, update):
 
-        message = "Ver 0.1.3"
+        message = "Ver 0.1.6"
         bot.send_message(chat_id=update.message.chat_id, text =message)
 
     def data_update(self):
@@ -79,6 +85,7 @@ class Bot(telegram.Bot):
         del r
         del testlist
         del headposition
+        del command
 
         self.df['consumer_ID'] = self.df[15].apply(self.Supplier_ID_conversion)
         self.df['supplier_ID'] = self.df[14].apply(self.Supplier_ID_conversion)
@@ -168,6 +175,15 @@ class Bot(telegram.Bot):
         bot.send_message(chat_id=update.message.chat_id, text =message)
         #
         #
+        del df10
+        del df11
+        del df12
+        del df13
+        del df20
+        del df21
+        del df22
+        del df23
+        del df_cpu
 
     def gpu(self, bot, update):
         self.df = self.data_update()
@@ -207,7 +223,14 @@ class Bot(telegram.Bot):
             
         bot.send_message(chat_id=update.message.chat_id, text=message)
 
-
+        del df23
+        del df22
+        del df21
+        del df20
+        del df13
+        del df12
+        del df11
+        del df10
          
     def consumers(self, bot, update):
 
@@ -254,6 +277,14 @@ class Bot(telegram.Bot):
         sns.lmplot( y="total_Ethash", x="total_expense_USD/h", data=df11, fit_reg=False, hue='consumer_ID', legend=True).savefig("consumer.png")
         bot.send_photo(chat_id=update.message.chat_id, photo=open('consumer.png', 'rb'))
         
+        del df11
+        del df10
+        del df12
+        del df13
+        del df20
+        del df21
+        del df22
+        del df23
 
 
     def suppliers(self, bot, update):
@@ -304,7 +335,15 @@ class Bot(telegram.Bot):
         #
         bot.send_photo(chat_id=update.message.chat_id, photo=open('supplier.png', 'rb'))
        
-
+        del df22
+        del df23
+        del df21
+        del df20
+        del df13
+        del df12
+        del df10
+        del df11
+        del df_cpu
 
 
     def profit(self, bot, update):
@@ -379,6 +418,15 @@ class Bot(telegram.Bot):
         bot.send_message(chat_id=update.message.chat_id, text =msg)
         
 
+        del df11
+        del df_cpu
+        del df10
+        del df12
+        del df13
+        del df20
+        del df21
+        del df23
+        del df22
 
 
 

@@ -49,7 +49,7 @@ class Bot(telegram.Bot):
 
     def version(self, bot, update):
 
-        message = "Ver 0.1.8"
+        message = "Ver 0.1.9"
         bot.send_message(chat_id=update.message.chat_id, text =message)
 
 
@@ -68,7 +68,7 @@ class Bot(telegram.Bot):
         out = PAIR.orderbook() 
         divider = 100000000
 
-        response = "Deal Index Coin for SONM (DICS)"
+        response = "Deal Index Coin for SONM (DICS)  https://bit.ly/2QXKCDF"
         response = response + "\n"
         response = response + "DICS price: " + str(int(out['bids'][0]['price']/divider)) + " sats"
         response = response + "\n"

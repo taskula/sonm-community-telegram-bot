@@ -11,6 +11,7 @@ seaborn = "*"
 pandas = "*"
 numpy = "*"
 scipy = "*"
+pywaves = "*"
 
 [requires]
 python_version = "3.6"

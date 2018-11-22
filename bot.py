@@ -49,8 +49,34 @@ class Bot(telegram.Bot):
 
     def version(self, bot, update):
 
-        message = "Ver 0.1.6"
+        message = "Ver 0.1.8"
         bot.send_message(chat_id=update.message.chat_id, text =message)
+
+
+    def DICS(selfself, bot, update):
+        import pywaves as pw
+
+        DICS = "Fweiconow1LnWTwCKdQzqUsbbc6xEnp1tMvFMqpm4e6F"
+        myToken = pw.Asset(DICS)
+        PAIR = pw.AssetPair(myToken, pw.BTC)
+        NODE = "http://nodes.wavesnodes.com"
+        # select the network: testnet or mainnet
+        NETWORK = "mainnet"
+        MATCHER = "http://matcher.wavesnodes.com"
+        pw.setNode(NODE, NETWORK)
+        pw.setMatcher(MATCHER)
+        out = PAIR.orderbook() 
+        divider = 100000000
+
+        response = "Deal Index Coin for SONM (DICS)"
+        response = response + "\n"
+        response = response + "DICS price: " + str(int(out['bids'][0]['price']/divider)) + " sats"
+        response = response + "\n"
+        response = response + "DICS/BTC exchange:  https://bit.ly/2Kg7jjZ"
+
+        bot.send_message(chat_id=update.message.chat_id, text=response)
+
+
 
     def data_update(self):
 
@@ -482,7 +508,7 @@ class Bot(telegram.Bot):
         dispatcher.add_handler(CommandHandler("consumers", self.consumers))
         dispatcher.add_handler(CommandHandler("predict", self.predict))
         dispatcher.add_handler(CommandHandler("gpu", self.gpu))
-
+        dispatcher.add_handler(CommandHandler("DICS", self.DICS))
 
         updater.start_polling()
         updater.idle()

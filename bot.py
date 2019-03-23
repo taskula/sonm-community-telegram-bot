@@ -29,8 +29,8 @@ class Bot(telegram.Bot):
         f = open('price.txt', 'r')
         content = f.readlines()
         f.close()
-        print("price " + content[12][24:-3])
-        increase = float(content[16][37:-3])
+        print("price " + content[13][24:-3])
+        increase = float(content[17][37:-3])
         print(increase)
 
         if increase > 10:
@@ -49,7 +49,7 @@ class Bot(telegram.Bot):
 
     def version(self, bot, update):
 
-        message = "Ver 0.1.9"
+        message = "Ver 0.2.0"
         bot.send_message(chat_id=update.message.chat_id, text =message)
 
 
@@ -113,11 +113,11 @@ class Bot(telegram.Bot):
         del headposition
         del command
 
-        self.df['consumer_ID'] = self.df[15].apply(self.Supplier_ID_conversion)
-        self.df['supplier_ID'] = self.df[14].apply(self.Supplier_ID_conversion)
-        self.df['price_USD/h'] = self.df[19].apply(self.Price_conversion)
+        self.df['consumer_ID'] = self.df[18].apply(self.Supplier_ID_conversion)
+        self.df['supplier_ID'] = self.df[17].apply(self.Supplier_ID_conversion)
+        self.df['price_USD/h'] = self.df[22].apply(self.Price_conversion)
         self.df['Ethash'] = self.df[10].apply(self.Ethash_conversion)
-        self.df['master_ID'] = self.df[16].apply(self.Master_ID_conversion)
+        self.df['master_ID'] = self.df[19].apply(self.Master_ID_conversion)
         self.df['benchmark'] = self.df[1].apply(self.benchmark)
 
         return self.df

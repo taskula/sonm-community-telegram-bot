@@ -49,7 +49,7 @@ class Bot(telegram.Bot):
 
     def version(self, bot, update):
 
-        message = "Ver 0.2.0"
+        message = "Ver 0.3.1"
         bot.send_message(chat_id=update.message.chat_id, text =message)
 
 

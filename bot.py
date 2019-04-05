@@ -19,9 +19,6 @@ class Bot(telegram.Bot):
 
         self.df = pd.DataFrame()
 
-    def hello(self, bot, update):
-        bot.send_message(chat_id=update.message.chat_id, text ='Hello World')
-
     def predict(self, bot, update):
 
         command = 'curl -s https://api.coinmarketcap.com/v2/ticker/1723/?convert=BTC > price.txt'
@@ -490,18 +487,7 @@ class Bot(telegram.Bot):
 
 
     def __commands(self, dispatcher):
-        # /start => respond_start()
-        start_handler = CommandHandler('start', self.respond_start)
-        dispatcher.add_handler(start_handler)
-
-    def start(self):
-        updater = Updater(token=self.config['Bot']['TOKEN'])
-        dispatcher = updater.dispatcher
-
-        self.__commands(dispatcher)
-
         dispatcher.add_handler(CommandHandler("stats", self.stats))
-        dispatcher.add_handler(CommandHandler("hello", self.hello))
         dispatcher.add_handler(CommandHandler("version", self.version))
         dispatcher.add_handler(CommandHandler("profit", self.profit))
         dispatcher.add_handler(CommandHandler("suppliers", self.suppliers))
@@ -510,8 +496,11 @@ class Bot(telegram.Bot):
         dispatcher.add_handler(CommandHandler("gpu", self.gpu))
         dispatcher.add_handler(CommandHandler("DICS", self.DICS))
 
+    def start(self):
+        updater = Updater(token=self.config['Bot']['TOKEN'])
+        dispatcher = updater.dispatcher
+
+        self.__commands(dispatcher)
+
         updater.start_polling()
         updater.idle()
-
-    def respond_start(self, bot, update):
-        bot.send_message(chat_id=update.message.chat_id, text="test")

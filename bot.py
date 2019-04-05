@@ -43,7 +43,7 @@ class Bot(telegram.Bot):
         bot.send_message(chat_id=update.message.chat_id, text=random.choice(foo))
 
     def version(self, bot, update):
-        message = "Ver 0.3.1"
+        message = "Ver 0.3.2"
         bot.send_message(chat_id=update.message.chat_id, text=message)
 
     def DICS(selfself, bot, update):

@@ -8,6 +8,8 @@ import numpy as np
 from scipy import stats
 import seaborn as sns
 import random
+import requests
+import time
 
 
 class Bot(telegram.Bot):
@@ -17,18 +19,29 @@ class Bot(telegram.Bot):
         self.config = config
         super(Bot,self).__init__(self.config['Bot']['TOKEN'], *args, **kwargs)
 
+        self.price = 0
+        self.price_cached_at = 0
         self.df = pd.DataFrame()
+
+    def __get_price(self):
+        ts = time.time()
+        if ts > self.price_cached_at+60:
+            try:
+                r = requests.get('https://api.binance.com/api/v3/avgPrice?symbol=SNMBTC')
+                data = r.json()
+                self.price = int(float(data["price"])*100000000)  # convert to satoshis
+                self.price_cached_at = ts
+            except Exception as e:
+                print(e)
+                return self.price  # return latest known price
+
+        return self.price
 
     def predict(self, bot, update):
 
-        command = 'curl -s https://api.coinmarketcap.com/v2/ticker/1723/?convert=BTC > price.txt'
-        os.system(command)
-        f = open('price.txt', 'r')
-        content = f.readlines()
-        f.close()
-        print("price " + content[13][24:-3])
-        increase = float(content[17][37:-3])
-        print(increase)
+        old_price = self.price
+        price = self.__get_price()
+        increase = price-old_price
 
         if increase > 10:
             foo = ['moon','moon','moon','moon','moon', 'two weeks','two weeks', 'ded']
@@ -36,12 +49,8 @@ class Bot(telegram.Bot):
             foo = ['moon', 'two weeks', 'ded']
         else:
             foo = ['moon', 'ded', 'ded', 'ded', 'ded','ded','scam','ded scam','ded scam village','delisted']
-        response = random.choice(foo)
-        bot.send_message(chat_id=update.message.chat_id, text =response)
 
-        del content
-        del increase
-        del response
+        bot.send_message(chat_id=update.message.chat_id, text=random.choice(foo))
 
 
     def version(self, bot, update):

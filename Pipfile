@@ -12,6 +12,8 @@ pandas = "*"
 numpy = "*"
 scipy = "*"
 pywaves = "*"
+requests = "*"
+
 
 [requires]
 python_version = "3.6"

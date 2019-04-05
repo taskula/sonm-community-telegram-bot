@@ -38,7 +38,6 @@ class Bot(telegram.Bot):
         return self.price
 
     def predict(self, bot, update):
-
         old_price = self.price
         price = self.__get_price()
         increase = price-old_price

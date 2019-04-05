@@ -19,8 +19,11 @@ class Bot(telegram.Bot):
         self.config = config
         super(Bot, self).__init__(self.config['Bot']['TOKEN'], *args, **kwargs)
 
+        self.btc_price = 0
         self.price = 0
         self.price_cached_at = 0
+        self.volume = 0
+
         self.dwh_deals = {}
         self.dwh_deals_cached_at = 0
         self.df = {}
@@ -463,6 +466,20 @@ class Bot(telegram.Bot):
     def total_expense(self, address):
         return self.df[self.df.consumer_ID == address]['price_USD/h'].sum()
 
+    def token_price(self, bot, update):
+        old_price = self.price
+        price = self.__get_price()
+
+        usd_price = format((self.btc_price * price/100000000), '.3f')
+
+        msg = """\
+SNM Price: {price} sats (${usd} US)\n\
+Volume: {vol} BTC\n\
+\n\
+(Source: Binance)""".format(price=price, usd=usd_price, vol=self.volume)
+
+        bot.send_message(chat_id=update.message.chat_id, text=msg)
+
     def __commands(self, dispatcher):
         dispatcher.add_handler(CommandHandler("stats", self.stats))
         dispatcher.add_handler(CommandHandler("version", self.version))
@@ -470,6 +487,7 @@ class Bot(telegram.Bot):
         dispatcher.add_handler(CommandHandler("suppliers", self.suppliers))
         dispatcher.add_handler(CommandHandler("consumers", self.consumers))
         dispatcher.add_handler(CommandHandler("predict", self.predict))
+        dispatcher.add_handler(CommandHandler("price", self.token_price))
         dispatcher.add_handler(CommandHandler("gpu", self.gpu))
         dispatcher.add_handler(CommandHandler("DICS", self.DICS))
 
@@ -487,14 +505,16 @@ class Bot(telegram.Bot):
 
         return self.deals
 
-
     def __get_price(self):
         ts = time.time()
         if ts > self.price_cached_at + 60:
             try:
-                r = requests.get('https://api.binance.com/api/v3/avgPrice?symbol=SNMBTC')
+                r = requests.get('https://api.binance.com/api/v1/ticker/24hr?symbol=BTCUSDT')
+                self.btc_price = int(float(r.json()["lastPrice"]))
+                r = requests.get('https://api.binance.com/api/v1/ticker/24hr?symbol=SNMBTC')
                 data = r.json()
-                self.price = int(float(data["price"]) * 100000000)  # convert to satoshis
+                self.price = int(float(data["lastPrice"]) * 100000000)  # convert to satoshis
+                self.volume = int(float(data["quoteVolume"]))
                 self.price_cached_at = ts
             except Exception as e:
                 print(e)

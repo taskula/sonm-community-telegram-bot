@@ -21,6 +21,9 @@ class Bot(telegram.Bot):
 
         self.price = 0
         self.price_cached_at = 0
+        self.dwh_deals = {}
+        self.dwh_deals_cached_at = 0
+        self.df = {}
 
     def predict(self, bot, update):
         old_price = self.price
@@ -469,6 +472,21 @@ class Bot(telegram.Bot):
         dispatcher.add_handler(CommandHandler("predict", self.predict))
         dispatcher.add_handler(CommandHandler("gpu", self.gpu))
         dispatcher.add_handler(CommandHandler("DICS", self.DICS))
+
+    def __get_dwh_deals(self):
+        ts = time.time()
+        if ts > self.deals_cached_at + 60:
+            try:
+                r = requests.request(method='get', url='https://dwh.livenet.sonm.com:15022/DWHServer/GetDeals/', data='{"status": 1}')
+                data = r.json()
+                self.deals = data
+                self.deals_cached_at = ts
+            except Exception as e:
+                print(e)
+                return self.deals  # return latest known price
+
+        return self.deals
+
 
     def __get_price(self):
         ts = time.time()

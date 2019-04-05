@@ -472,11 +472,21 @@ class Bot(telegram.Bot):
 
         usd_price = format((self.btc_price * price/100000000), '.3f')
 
+        hashrate = 0
+        for deal in self.__get_dwh_deals():
+            hashrate += deal["deal"]["benchmarks"]["values"][9]
+
+        hashrate /= 1000000  # convert to MH/s
+        hashrate = format(hashrate, '.2f')
+
         msg = """\
 SNM Price: {price} sats (${usd} US)\n\
 Volume: {vol} BTC\n\
 \n\
-(Source: Binance)""".format(price=price, usd=usd_price, vol=self.volume)
+(Source: Binance)\n\
+\n\
+Deals: {deals}\n\
+ETH-hashrate: {hashrate} MH/s""".format(price=price, usd=usd_price, vol=self.volume, deals=len(self.__get_dwh_deals()), hashrate=hashrate)
 
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
@@ -493,17 +503,17 @@ Volume: {vol} BTC\n\
 
     def __get_dwh_deals(self):
         ts = time.time()
-        if ts > self.deals_cached_at + 60:
+        if ts > self.dwh_deals_cached_at + 60:
             try:
                 r = requests.request(method='get', url='https://dwh.livenet.sonm.com:15022/DWHServer/GetDeals/', data='{"status": 1}')
                 data = r.json()
-                self.deals = data
-                self.deals_cached_at = ts
+                self.dwh_deals = data["deals"]
+                self.dwh_deals_cached_at = ts
             except Exception as e:
                 print(e)
-                return self.deals  # return latest known price
+                return self.dwh_deals  # return latest known price
 
-        return self.deals
+        return self.dwh_deals
 
     def __get_price(self):
         ts = time.time()

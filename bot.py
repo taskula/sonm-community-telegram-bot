@@ -23,6 +23,7 @@ class Bot(telegram.Bot):
         self.price = 0
         self.price_cached_at = 0
         self.volume = 0
+        self.snm_change = 0
 
         self.dwh_deals = {}
         self.dwh_deals_cached_at = 0
@@ -31,7 +32,7 @@ class Bot(telegram.Bot):
     def predict(self, bot, update):
         old_price = self.price
         price = self.__get_price()
-        increase = price - old_price
+        increase =  (self.snm_change/price)*100
 
         if increase > 10:
             foo = ['moon', 'moon', 'moon', 'moon', 'moon', 'two weeks', 'two weeks', 'ded']
@@ -43,7 +44,7 @@ class Bot(telegram.Bot):
         bot.send_message(chat_id=update.message.chat_id, text=random.choice(foo))
 
     def version(self, bot, update):
-        message = "Ver 0.3.5"
+        message = "Ver 0.4.0"
         bot.send_message(chat_id=update.message.chat_id, text=message)
 
     def DICS(selfself, bot, update):
@@ -549,12 +550,16 @@ ETH-hashrate: {hashrate} MH/s""".format(price=price, usd=usd_price, vol=self.vol
                 data = r.json()
                 self.price = int(float(data["lastPrice"]) * 100000000)  # convert to satoshis
                 self.volume = int(float(data["quoteVolume"]))
+                self.snm_change = int(float(data["priceChange"]) * 100000000)  # change is converted to satoshis
                 self.price_cached_at = ts
             except Exception as e:
                 print(e)
                 return self.price  # return latest known price
 
         return self.price
+
+
+
 
     def start(self):
         updater = Updater(token=self.config['Bot']['TOKEN'])

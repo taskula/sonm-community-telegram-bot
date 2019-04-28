@@ -10,7 +10,7 @@ import seaborn as sns
 import random
 import requests
 import time
-
+import pywaves as pw
 
 class Bot(telegram.Bot):
     def __init__(self, config, *args, **kwargs):
@@ -43,7 +43,7 @@ class Bot(telegram.Bot):
         bot.send_message(chat_id=update.message.chat_id, text=random.choice(foo))
 
     def version(self, bot, update):
-        message = "Ver 0.3.2"
+        message = "Ver 0.3.5"
         bot.send_message(chat_id=update.message.chat_id, text=message)
 
     def DICS(selfself, bot, update):
@@ -68,6 +68,9 @@ class Bot(telegram.Bot):
         response = response + "DICS/BTC exchange:  https://bit.ly/2Kg7jjZ"
 
         bot.send_message(chat_id=update.message.chat_id, text=response)
+
+
+
 
     def data_update(self):
         command = "curl -s https://dwh.livenet.sonm.com:15022/DWHServer/GetDeals/ -d"
@@ -479,6 +482,26 @@ class Bot(telegram.Bot):
         hashrate /= 1000000  # convert to MH/s
         hashrate = format(hashrate, '.2f')
 
+        DICS = "Fweiconow1LnWTwCKdQzqUsbbc6xEnp1tMvFMqpm4e6F"
+        myToken = pw.Asset(DICS)
+        PAIR = pw.AssetPair(myToken, pw.BTC)
+        NODE = "http://nodes.wavesnodes.com"
+        # select the network: testnet or mainnet
+        NETWORK = "mainnet"
+        MATCHER = "http://matcher.wavesnodes.com"
+        pw.setNode(NODE, NETWORK)
+        pw.setMatcher(MATCHER)
+        out = PAIR.orderbook()
+        divider = 100000000
+
+        #return int(out['bids'][0]['price'] / divider)
+        DICS_price =  int(out['bids'][0]['price'] / divider)
+
+        #DICS_price = DICS_price()
+        usd_DICS_price = format((self.btc_price * DICS_price/100000000), '.3f')
+
+
+
         msg = """\
 SNM Price: {price} sats (${usd} US)\n\
 Volume: {vol} BTC\n\
@@ -486,7 +509,8 @@ Volume: {vol} BTC\n\
 (Source: Binance)\n\
 \n\
 Deals: {deals}\n\
-ETH-hashrate: {hashrate} MH/s""".format(price=price, usd=usd_price, vol=self.volume, deals=len(self.__get_dwh_deals()), hashrate=hashrate)
+DICS Price: {DICS_price} sats (${DICS_usd} US)\n\
+ETH-hashrate: {hashrate} MH/s""".format(price=price, usd=usd_price, vol=self.volume, deals=len(self.__get_dwh_deals()), DICS_price = DICS_price, DICS_usd = usd_DICS_price, hashrate=hashrate)
 
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 

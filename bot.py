@@ -35,7 +35,7 @@ class Bot(telegram.Bot):
         increase =  (self.snm_change/price)*100
 
         if increase > 10:
-            foo = ['moon', 'moon', 'moon', 'moon', 'moon', 'two weeks', 'two weeks', 'ded']
+            foo = ['SUPER MOON', 'moon', 'moon', 'moon', 'moon', 'moon', 'two weeks', 'ded']
         elif increase > 5:
             foo = ['moon', 'two weeks', 'ded']
         else:
@@ -44,7 +44,7 @@ class Bot(telegram.Bot):
         bot.send_message(chat_id=update.message.chat_id, text=random.choice(foo))
 
     def version(self, bot, update):
-        message = "Ver 0.4.0"
+        message = "Ver 0.5.4"
         bot.send_message(chat_id=update.message.chat_id, text=message)
 
     def DICS(selfself, bot, update):
@@ -161,6 +161,20 @@ class Bot(telegram.Bot):
         # df_cpu2 = df_cpu[['price_USD/h','master_ID','benchmark',0]].sort_values('price_USD/h', ascending = False)
         #
         # send stats to telegram
+
+        ###############################################
+        #hashrate = format(hashrate, '.2f')
+        # Calculate SNM inside the sidechain here######
+        k = requests.get('https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x983f6d60db79ea8ca4eb9968c6aff8cfa04b3c63&address=0x125f1e37a45abf9b9894aefcb03d14d170d1489b')
+        #l = requests.get('https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x983f6d60db79ea8ca4eb9968c6aff8cfa04b3c63')
+        sidechain_amount = int(k.json()['result'])/1000000000000000000
+        total_supply = 440*1000*1000
+        sidechain_percent = sidechain_amount/total_supply*100
+        sidechain_percent = format(sidechain_percent, '.4f')
+        ###############################################
+
+
+
         message = ('Real-time total Ethash rate of the entire SONM platform is ' + str(
             df13['total_Ethash'].sum()) + ' Mh/s.')
         message = message + "\n"
@@ -196,9 +210,14 @@ class Bot(telegram.Bot):
         message = message + "\n"
         message = message + (
                     'CPU-Connor currently pays ' + str("{:.2f}".format(df_cpu['price_USD/h'].sum() * 24)) + " USD/day.")
+        message = message + "\n"
+        message = message + ("Currently " + str(sidechain_amount)+ " SNM are deposited in the SONM side-chain, which are " + str(sidechain_percent) + "% of the total supply.")   
+
+        # Push the message to the bot here
         bot.send_message(chat_id=update.message.chat_id, text=message)
         #
-        #
+        
+
         del df10
         del df11
         del df12
@@ -481,6 +500,7 @@ class Bot(telegram.Bot):
             hashrate += deal["deal"]["benchmarks"]["values"][9]
 
         hashrate /= 1000000  # convert to MH/s
+        hashrate /= 1000     # further convert to GH/s
         hashrate = format(hashrate, '.2f')
 
         DICS = "Fweiconow1LnWTwCKdQzqUsbbc6xEnp1tMvFMqpm4e6F"
@@ -511,7 +531,7 @@ Volume: {vol} BTC\n\
 \n\
 Deals: {deals}\n\
 DICS Price: {DICS_price} sats (${DICS_usd} US)\n\
-ETH-hashrate: {hashrate} MH/s""".format(price=price, usd=usd_price, vol=self.volume, deals=len(self.__get_dwh_deals()), DICS_price = DICS_price, DICS_usd = usd_DICS_price, hashrate=hashrate)
+ETH-hashrate: {hashrate} GH/s""".format(price=price, usd=usd_price, vol=self.volume, deals=len(self.__get_dwh_deals()), DICS_price = DICS_price, DICS_usd = usd_DICS_price, hashrate=hashrate)
 
         bot.send_message(chat_id=update.message.chat_id, text=msg)
 
